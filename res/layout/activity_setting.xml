@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="278dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="@string/Selectapk"
+        android:textSize="15sp" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal" />
+
+    <TextView
+        android:id="@+id/spinnertext1"
+        android:layout_width="188dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+        android:text="@string/certs" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/selectcerts"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:text="@string/brows" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="100dip" />
+
+    <Button
+        android:id="@+id/backbutton"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:text="@string/backbutton" />
+
+</LinearLayout>
