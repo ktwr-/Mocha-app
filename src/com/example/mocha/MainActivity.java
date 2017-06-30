@@ -98,6 +98,7 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 			public void onClick(View v) {
 				// TODO make csp edit function
 				Log.d("Mocha", globalvar.getSpinnerString());
+				long start = System.currentTimeMillis();
 				apkCopy(globalvar.getAPKSource(globalvar.getPackageInfo(globalvar.getSpinnerString())));
 				MochaMain mocha = new MochaMain();
 				//mocha.MochaMain("Back", "/data/data/com.example.mocha/files");
@@ -115,6 +116,8 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				long end = System.currentTimeMillis();
+				Log.d("time", (end - start) +"ms");
 						
 				
 			}
