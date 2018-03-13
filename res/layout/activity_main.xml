@@ -15,21 +15,38 @@
         android:text="@string/hello_world" />
 
     <Button
-        android:id="@+id/backbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="69dp"
-        android:layout_toRightOf="@+id/textView1"
-        android:text="@string/button" />
-
-    <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/backbutton"
-        android:layout_below="@+id/backbutton"
-        android:layout_marginTop="35dp"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="15dp"
         android:text="CSPedit" />
+
+    <Button
+        android:id="@+id/openSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/backbutton"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="102dp"
+        android:text="@string/Setting" />
+
+    <Button
+        android:id="@+id/backbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/Install" />
+
+    <Button
+        android:id="@+id/uninstall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/backbutton"
+        android:layout_alignLeft="@+id/backbutton"
+        android:layout_marginBottom="27dp"
+        android:text="@string/Uninstall" />
 
 </RelativeLayout>

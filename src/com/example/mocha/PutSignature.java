@@ -16,7 +16,7 @@ import org.apache.commons.cli.ParseException;
 import net.fornwall.apksigner.*;
 
 /**
- * This class put a signature ato apk file.
+ * This class put a signature to APK file.
  * @author takeuchi
  *
  */

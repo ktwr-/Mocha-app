@@ -16,6 +16,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -23,11 +24,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -42,6 +45,8 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 	
 	private static final int SETTING = 2;
 	
+	public static int CSP_VERSION;
+	
 	// initial folda
 	private String m_strInitialDir = Environment.getExternalStorageDirectory().toString();
 	
@@ -55,6 +60,13 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		System.out.println("Mocha AndroidVersion:"+Build.VERSION.SDK_INT);
+		if(Build.VERSION.SDK_INT >= 22){
+			CSP_VERSION = 2;
+		} else {
+			CSP_VERSION = 1;
+		}
 		
 		globalvar = (GlobalVar)this.getApplication();
 
@@ -78,16 +90,25 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 				e.printStackTrace();
 			}
 		}
-		// button 
+		// CSP APK Install button 
 		Button install_button = (Button)findViewById(R.id.backbutton);
 		install_button.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				apkUninstall(globalvar.getPackageInfo(globalvar.getSpinnerString()).packageName);
+				//apkUninstall(globalvar.getPackageInfo(globalvar.getSpinnerString()).packageName);
 				File file = new File("/data/data/com.example.mocha/files/cspch.apk");
 				file.setReadable(true,false);
 				apkInstall("/data/data/com.example.mocha/files/cspch.apk");
+			}
+		});
+		
+		Button uninstallButton = (Button)findViewById(R.id.uninstall);
+		uninstallButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				apkUninstall(globalvar.getPackageInfo(globalvar.getSpinnerString()).packageName);
 			}
 		});
 		
@@ -105,7 +126,11 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 				Boolean unpackZip = MainActivity.unpackZip("/data/data/com.example.mocha/files/Back.apk","/data/data/com.example.mocha/files/");
 				ArrayList<String> tmp = new ArrayList<String>(MainActivity.getFiles("/data/data/com.example.mocha/files/Back/"));
 				try {
-					CspAndroidHelper.CspHelper("/data/data/com.example.mocha/files/Back");
+					if(CSP_VERSION == 1){
+						CspAndroidHelper.CspHelper("/data/data/com.example.mocha/files/Back");
+					}else if(CSP_VERSION ==2){
+						CspAndroidHelper.Csp2Helper("/data/data/com.example.mocha/files/Back");
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -117,15 +142,37 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 					e.printStackTrace();
 				}
 				long end = System.currentTimeMillis();
-				Log.d("time", (end - start) +"ms");
+				Log.d("CSPtime", (end - start) +"ms");
+				rmBackfile("Back/");
+				//deleteFile("/data/data/com.example.mocha/files/Back/*");
 						
 				
+			}
+		});
+		
+		Button openSetting = (Button)findViewById(R.id.openSetting);
+		openSetting.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
+				startActivity(intent);
 			}
 		});
 		
 		mAlertDlg = builder.create();
 		
 	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event){
+		float pointX = event.getX();
+		float pointY = event.getY();
+		
+		Log.d("TouchEvent", "X: "+pointX + ",Y: "+pointY);
+		return false;
+	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,6 +235,7 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 		
 		if(pm == null){
 			Log.d("error", "none package manager");
+			
 		}else{
 			String workDirPath = this.getFilesDir().getPath();
 			InputStream input;
@@ -211,6 +259,23 @@ public class MainActivity extends Activity implements PackageSelectionDialog.OnP
 					e.printStackTrace();
 				}catch(IOException e){
 					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void rmBackfile(String dirname){
+		Log.d("remove", "/data/data/com.example.mocha/files/"+dirname);
+		File dir = new File("/data/data/com.example.mocha/files/"+dirname);
+		if(dir.isDirectory()){
+			String[] children = dir.list();
+			for(int i = 0; i <children.length; i++){
+				if(new File(dir,children[i]).isDirectory()){
+					rmBackfile(dirname+children[i]+"/");
+					new File(dir,children[i]).delete();
+				}else{
+					Log.d("remove", dir+children[i]);
+					new File(dir,children[i]).delete();
 				}
 			}
 		}

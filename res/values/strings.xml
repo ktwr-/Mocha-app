@@ -7,11 +7,14 @@
     <string name="dlg_title">button</string>
     <string name="CSPedit">CSPedit</string>
     <string name="button">Button</string>
+    <string name="Install">Install CSP APK</string>
     <string name="prefertitle">setting title</string>
     <string name="Selectapk">Select Application</string>
     <string name="backbutton">Back</string>
     <string name="certs">Select Certification</string>
     <string name="brows">Select File</string>
+    <string name="Setting">Open Setting</string>
+    <string name="Uninstall">App Uninstall</string>
     
 
 </resources>

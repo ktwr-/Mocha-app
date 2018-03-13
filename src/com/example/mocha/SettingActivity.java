@@ -1,11 +1,19 @@
 package com.example.mocha;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +25,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.pm.ApplicationInfo;
@@ -39,6 +48,7 @@ public class SettingActivity extends Activity implements FileSelectionDialog.OnF
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_setting);
+		
 		
 		// back button
 		Button btn = (Button)findViewById(R.id.backbutton);
@@ -89,6 +99,7 @@ public class SettingActivity extends Activity implements FileSelectionDialog.OnF
 		});
 	}		
 	
+	
 	public void callFileSelection(){
 		FileSelectionDialog apkdlg = new FileSelectionDialog(this,this);
 		apkdlg.show(new File(m_strInitialDir));
@@ -99,6 +110,7 @@ public class SettingActivity extends Activity implements FileSelectionDialog.OnF
 		
 		PackageManager pm = this.getPackageManager();
 		package_list = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+		ArrayList<String> defaultApp;
 		int i = 0;
 		for(PackageInfo info : package_list){
 			if(info.applicationInfo != null){
@@ -108,13 +120,19 @@ public class SettingActivity extends Activity implements FileSelectionDialog.OnF
 				}else{
 					//Log.d("installApp", info.packageName);
 					listPackageInfo.add(info);
-					i++;
 					ApplicationInfo ai;
+					defaultApp = new ArrayList<String>(RestoreDefaultApp());
 					try {
 						ai = pm.getApplicationInfo(info.packageName, 0);
-						m_appSourceValue.put(info, ai.publicSourceDir);
-						m_appKeyValue.put(info.applicationInfo.loadLabel(pm).toString(),info);
-						Log.d("Mocha", info.applicationInfo.loadLabel(pm).toString());
+						if(compareDefaultApp(defaultApp,ai.publicSourceDir) && !info.applicationInfo.loadLabel(pm).toString().equals("Mocha")){
+							i++;
+							m_appSourceValue.put(info, ai.publicSourceDir);
+							m_appKeyValue.put(info.applicationInfo.loadLabel(pm).toString(),info);
+							//writeDefaultApp(ai.publicSourceDir);
+							Log.d("Mocha", info.applicationInfo.loadLabel(pm).toString());
+						}
+							
+							
 					} catch (NameNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -127,12 +145,49 @@ public class SettingActivity extends Activity implements FileSelectionDialog.OnF
 		i = 0;
 		for(String key : m_appKeyValue.keySet()){
 			spinnerItems[i++] = key;
+			Log.d("mocha", String.valueOf(m_appKeyValue.size()));
 		}
+		Log.d("mocha", String.valueOf(spinnerItems.length));
 		
 	}
 	public void onFileSelect(File file){
 		Toast.makeText(this, "File Selected : "+file.getPath() , Toast.LENGTH_SHORT).show();
 		m_strInitialDir = file.getParent();
+	}
+	
+	// for evaluate
+	public void writeDefaultApp(String str){
+		try {
+			FileOutputStream fileOutputstream = openFileOutput("app.txt",Context.MODE_APPEND);
+			fileOutputstream.write(str.getBytes());
+			fileOutputstream.write("\n".getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public boolean compareDefaultApp(ArrayList<String> list,String str){
+		if(list != null && list.contains(str)){
+			return false;
+		}
+		return true;
+		
+	}
+	
+	public ArrayList<String> RestoreDefaultApp(){
+		ArrayList<String> defaultAppList = new ArrayList<String>();
+		try {
+			FileInputStream fis = openFileInput("app.txt");
+			String lineBuffer = null;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fis,"UTF-8"));
+			while( (lineBuffer = reader.readLine()) != null){
+				defaultAppList.add(lineBuffer);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return defaultAppList;
 	}
 		
 			

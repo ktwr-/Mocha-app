@@ -46,7 +46,7 @@
         android:layout_height="100dip" />
 
     <Button
-        android:id="@+id/backbutton"
+        android:id="@id/backbutton"
         android:layout_width="210dp"
         android:layout_height="wrap_content"
         android:text="@string/backbutton" />
